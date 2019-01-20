@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <math.h>
 #include <assert.h>
 #include <stdbool.h>
 
@@ -8,9 +7,9 @@
  * @function bubbleup
  * @abstract Inplace shift of array values between the initial `i' and `right` up by 1.
  * @param arr_ptr Pointer to the first element of the array
- * @param i
- * @param prev_val Value of array at `i'-1
- * @param right
+ * @param i index value to be shifted up
+ * @param prev_val value of array at `i'-1
+ * @param right index value to stop shifting up.
  * */
 void bubbleup(int* arr_ptr, int i, int prev_val, const int right){
     if (i <= right){
@@ -22,16 +21,16 @@ void bubbleup(int* arr_ptr, int i, int prev_val, const int right){
 
 /*!
  * @function insert
- * @abstract Inserts the pivot value into the correct place in the array segment.
+ * @abstract Inplace inserts the pivot value into the correct place in the array segment.
  * @discussion Array values between `lowerIdx' and `right'-1 are assumed to be sorted;
  *            `lowerIdx' is the smallest value and `right'-1  is the largest value. The goal is to
  *             insert the current pivot value into the correct place.  To do this
- *             iterate from `lowerIdx' to `right'-1 to find correct place to insert the pivot value.
+ *             iterate `left` up until `right'-1 each iteration checking if `pivot_value` can be inserted into
+ *             the current value of index `left`.
  * @param arr_ptr Pointer to the first element of the array
  * @param pivot_value The value of the current pivot.
  * @param left The index of value we are checking pivot against to see if we should insert pivot at this place.
  * @param right The index of the current pivot.
- * @result Inplace insertion of of pivot value
  * */
 void insert(int * arr_ptr, const int pivot_value, int left, const int right){
     if (left < right){
@@ -54,8 +53,8 @@ void insert(int * arr_ptr, const int pivot_value, int left, const int right){
  *             and inserts it there. It repeats until no input elements remain.
  * @param arr_ptr Pointer to the first element of the array
  * @param right The index of the current pivot.
- * @param lowerIdx Lower index threshold of array partition of interest.
- * @param upperIdx Upper index threshold of array partition of interest.
+ * @param lowerIdx Lower index threshold of subarray to sort.
+ * @param upperIdx Upper index threshold of subarray to sort.
  * */
  void insertion_sort(int* arr_ptr, int right, int lowerIdx, const int upperIdx) {
     if (right <= upperIdx){
@@ -75,12 +74,27 @@ void insert(int * arr_ptr, const int pivot_value, int left, const int right){
     }
 }
 
+/*!
+ * @function swap
+ * @abstract  swaps the array value at index `left` with array value at index `right`
+ * @param arr_ptr Pointer to the first element of the array.
+ * @param left left index as specified by Hoare partition algorithm.
+ * @param right right index as specified by Hoare partition algorithm.
+ * */
 void swap(int* arr_ptr, int left, int right){
     int temp = *(arr_ptr+left);
     *(arr_ptr+left) = *(arr_ptr+right);
     *(arr_ptr+right) = temp;
 }
 
+/*!
+ * @function hoare_partition
+ * @abstract  tail-recursive version of the main loop in Hoare's partition algorithm
+ * @param arr_ptr Pointer to the first element of the array.
+ * @param left left index as specified by Hoare partition algorithm.
+ * @param right right index as specified by Hoare partition algorithm.
+ * @param pivot_val Value of pivot to perform Hoare's algorithm on.
+ * */
 int hoare_partition(int* arr_ptr, int left, int right, int pivot_val){
     if (left > right){
         return right;
@@ -102,6 +116,15 @@ int hoare_partition(int* arr_ptr, int left, int right, int pivot_val){
     }
 }
 
+/*!
+ * @function hoare_partition_wrapper
+ * @abstract Implements Hoare partition algorithm; the workhorse algorithm of quicksort.
+ * @discussion Inplace partition of a subarray within the input array, `arr_ptr`,
+ *             specified by `lowerIdx` and `upperIdx` index.
+ * @param arr_ptr Pointer to the first element of the array
+ * @param lowerIdx Lower index threshold of subarray to sort.
+ * @param upperIdx Upper index threshold of subarray to sort.
+ * */
 int hoare_partition_wrapper(int* arr_ptr, int lowerIdx, int upperIdx){
     if (upperIdx >= 0){
         int pivotIdx = (lowerIdx+upperIdx)/2;
@@ -119,6 +142,14 @@ int hoare_partition_wrapper(int* arr_ptr, int lowerIdx, int upperIdx){
     }
 };
 
+/*!
+ * @function quick_sort_varient
+ * @abstract  in-place sorting algorithm that uses the quicksort algorithm when partitions are more than
+              10 elements long and insertion sort algorithm for anything less
+ * @param arr_ptr Pointer to the first element of the array
+ * @param lowerIdx Lower index threshold of subarray to sort.
+ * @param upperIdx Upper index threshold of subarray to.
+ * */
 void quick_sort_varient(int* arr_ptr, int lowerIdx, int upperIdx){
     if (lowerIdx < upperIdx){
         int pivotIdx = hoare_partition_wrapper(arr_ptr, lowerIdx, upperIdx);
@@ -145,12 +176,27 @@ void quick_sort_varient(int* arr_ptr, int lowerIdx, int upperIdx){
     }
 }
 
+/*!
+ * @function sort
+ * @abstract  Essentially a wrapper for the function `quick_sort_varient'. If the array is non NULL
+ *            it calls the function `quick_sort_varient` to sort the array in place.
+ * Calls the function Sets `lowerIdx` to 0 and
+ * @param arr_ptr Pointer to the first element of the array.
+ * @param arr_sz Number of elements in the array.
+ * */
 void sort(int* arr_ptr, const int arr_sz){
     if (arr_sz> 0){
         quick_sort_varient(arr_ptr, 0, arr_sz-1);
     }
 }
-
+/*!
+ * @fundtion isarrayEqual
+ * @abstract returns true iff `arr1' == `arr2'.
+ * @param arr1 Array to compare against `arr2'
+ * @param arr2 Array to compare against `arr1'
+ * @param n number of elements in `arr1`
+ * @param m number of elements in `arr2`
+ */
 bool isarrayEqual(int arr1[], int arr2[],int n ,int m){
     if (n != m){
         return false;
@@ -163,8 +209,6 @@ bool isarrayEqual(int arr1[], int arr2[],int n ,int m){
 }
 
 int main() {
-
-
     //Test 1
     int arr[]={1,7,11,-99,15,10};
     int arr_sorted[] = {-99, 1, 7, 10, 11, 15};
