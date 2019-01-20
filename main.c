@@ -57,8 +57,8 @@ void insert(int * arr_ptr, const int pivot_value, int left, const int right){
  * @param lowerIdx Lower index threshold of array partition of interest.
  * @param upperIdx Upper index threshold of array partition of interest.
  * */
- void insertion_sort(int* arr_ptr, int right, int upperIdx, const int upperIdx) {
-    if (right < upperIdx){
+ void insertion_sort(int* arr_ptr, int right, int lowerIdx, const int upperIdx) {
+    if (right <= upperIdx){
         if (right >= 1) {
             int pivot_value = *(arr_ptr + right);
             if (*(arr_ptr + (right - 1)) > pivot_value) {
@@ -102,7 +102,6 @@ int hoare_partition(int* arr_ptr, int left, int right, int pivot_val){
     }
 }
 
-
 int hoare_partition_wrapper(int* arr_ptr, int lowerIdx, int upperIdx){
     if (upperIdx >= 0){
         int pivotIdx = (lowerIdx+upperIdx)/2;
@@ -120,32 +119,35 @@ int hoare_partition_wrapper(int* arr_ptr, int lowerIdx, int upperIdx){
     }
 };
 
-void quick_sort(int* arr_ptr, int lowerIdx, int upperIdx){
+void quick_sort_varient(int* arr_ptr, int lowerIdx, int upperIdx){
     if (lowerIdx < upperIdx){
         int pivotIdx = hoare_partition_wrapper(arr_ptr, lowerIdx, upperIdx);
-        quick_sort(arr_ptr, lowerIdx, pivotIdx -1  );
-        quick_sort(arr_ptr, pivotIdx +1, upperIdx);
+        if ((pivotIdx + 1 > 10) && ((upperIdx-pivotIdx + 1) > 10)){
+            //printf("Case 1\n");
+            quick_sort_varient(arr_ptr, lowerIdx, pivotIdx -1  );
+            quick_sort_varient(arr_ptr, pivotIdx +1, upperIdx);
+        }
+        else if ((pivotIdx +1 <= 10) && ((upperIdx-pivotIdx + 1) > 10)){
+            //printf("Case 2\n");
+            insertion_sort(arr_ptr, lowerIdx, lowerIdx, pivotIdx -1);
+            quick_sort_varient(arr_ptr, pivotIdx +1, upperIdx);
+        }
+        else if ((pivotIdx +1 > 10) && ((upperIdx-pivotIdx + 1) <= 10)){
+            //printf("Case 3\n");
+            quick_sort_varient(arr_ptr, lowerIdx, pivotIdx -1);
+            insertion_sort(arr_ptr, pivotIdx +1, pivotIdx +1, upperIdx);
+        }
+        else{
+            //printf("Case 4\n");
+            insertion_sort(arr_ptr, lowerIdx, lowerIdx, pivotIdx -1);
+            insertion_sort(arr_ptr, pivotIdx +1, pivotIdx +1, upperIdx);
+        }
     }
 }
 
 void sort(int* arr_ptr, const int arr_sz){
     if (arr_sz> 0){
-        int pivotIdx = hoare_partition_wrapper(arr_ptr, 0, arr_sz);
-        if ((pivotIdx > 10) || ((arr_sz-pivotIdx) > 10)){
-            quick_sort(arr_ptr, 0, pivotIdx -1 );
-            quick_sort(arr_ptr, pivotIdx +1, arr_sz);
-        }
-        else{
-            insertion_sort(arr_ptr, arr_sz, 0);
-        }
-    }
-}
-
-void printme(const int* arr_ptr, int arr_sz){
-    int i;
-    for (i = 0; i < arr_sz; ++i)
-    {
-        printf("%d\n",*(arr_ptr+i));
+        quick_sort_varient(arr_ptr, 0, arr_sz-1);
     }
 }
 
@@ -162,32 +164,33 @@ bool isarrayEqual(int arr1[], int arr2[],int n ,int m){
 
 int main() {
 
-    // bubbleup(arr, 4,11,5);// -> (1,7,11,-11,15)
-    //insert(arr, 0, 3); -> -1 1 7 11 15 10
 
-    //insertion_sort(arr, 0, 6);
-    //sort(arr,6);
-
-    //isarrayEqual(arr,arr);
-    //insertion_sort(arr, 6, 0);
-   // printme(arr,6);
-    // Run insertion sort
+    //Test 1
     int arr[]={1,7,11,-99,15,10};
-
-    quick_sort(arr,0,5);
-    printme(arr,6);
-
-    //hoare_partition_wrapper(arr,  0, 5);
-    //printme(arr,6);
-    /*
+    int arr_sorted[] = {-99, 1, 7, 10, 11, 15};
     int n = sizeof (arr) / sizeof (int);
-    //insertion_sort(arr,n,0);
-    quick_sort(arr,0,n-1);
+    int m = sizeof (arr_sorted) / sizeof (int);
+    sort(arr, n);
+    isarrayEqual(arr, arr_sorted, n, m);
 
-    // Test insertion sort
-    int arrTest[] = {-99,1,7,10,11,15};
-    int m =  sizeof (arrTest)/sizeof (int);
-    assert(isarrayEqual(arr, arrTest, n, m) == true);*/
+    // Test 2
+    int arr1[]={1,7,11,-99,15,10, 10, -4, 4,2,-66,5, 0, 2,90,100,17,35,211,-43};
+    int arr1_sorted[] = {-99, -66, -43, -4, 0, 1, 2, 2, 4, 5, 7, 10, 10, 11, 15, 17, 35, 90, 100, 211};
+    n = sizeof (arr1) / sizeof (int);
+    m = sizeof (arr1_sorted) / sizeof (int);
+    sort(arr1, n);
+    isarrayEqual(arr1, arr1_sorted, n, m);
+
+    // Test 3
+    int arr2[]={1,7,11,-99,15,10, 10, -4, 4,2,-66,5, 0, 2,90,100,
+                17,35,211,-43,454,6,54,-35,256,34,2,77,46,2,6773,2678,-776};
+    int arr2_sorted[]= {-776, -99 , -66 ,-43 ,-35 ,-4, 0, 1, 2, 2, 2, 2, 4, 5,
+                        6, 7, 10, 10, 11, 15, 17, 34, 35, 46, 54, 77, 90, 100, 211, 256, 454, 2678, 6773} ;
+
+    n = sizeof (arr2) / sizeof (int);
+    m = sizeof (arr2_sorted) / sizeof (int);
+    sort(arr2, n);
+    isarrayEqual(arr2, arr2_sorted, n, m);
 
 
     return 0;
