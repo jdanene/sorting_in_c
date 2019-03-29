@@ -209,7 +209,7 @@ bool isarrayEqual(int arr1[], int arr2[],int n ,int m){
 }
 
 int main() {
-    //Test 1
+    //Test 1: Case 1
     int arr[]={1,7,11,-99,15,10};
     int arr_sorted[] = {-99, 1, 7, 10, 11, 15};
     int n = sizeof (arr) / sizeof (int);
@@ -217,7 +217,7 @@ int main() {
     sort(arr, n);
     isarrayEqual(arr, arr_sorted, n, m);
 
-    // Test 2
+    // Test 2: Case 2, 3
     int arr1[]={1,7,11,-99,15,10, 10, -4, 4,2,-66,5, 0, 2,90,100,17,35,211,-43};
     int arr1_sorted[] = {-99, -66, -43, -4, 0, 1, 2, 2, 4, 5, 7, 10, 10, 11, 15, 17, 35, 90, 100, 211};
     n = sizeof (arr1) / sizeof (int);
@@ -225,7 +225,7 @@ int main() {
     sort(arr1, n);
     isarrayEqual(arr1, arr1_sorted, n, m);
 
-    // Test 3
+    // Test 3: Case 4
     int arr2[]={1,7,11,-99,15,10, 10, -4, 4,2,-66,5, 0, 2,90,100,
                 17,35,211,-43,454,6,54,-35,256,34,2,77,46,2,6773,2678,-776};
     int arr2_sorted[]= {-776, -99 , -66 ,-43 ,-35 ,-4, 0, 1, 2, 2, 2, 2, 4, 5,
@@ -239,3 +239,14 @@ int main() {
 
     return 0;
 }
+
+/*  ***** Comment on potential limitations or failure modes of your algorithm *****
+ *
+ *  - if the array is not integer valued then this algorithm will obviously fail.
+ *  - if the user inputs the wrong size for the vector this algorithm will fail, and potentially have undefined consequences
+ *    on the users memory; such as overwrite an important piece of information. In production it would be preferable for the
+ *    algorithm to automatically compute the length of the array instead of requiring the user to input the array length.
+ *  - since the implementation is tail recursive I don't foresee stack overflow but if the user inputs a really really big array
+ *    then this algorithm could potentially fail. For these arrays the partitions should be > 10 so it should run in O(nlog n)
+ *    which is nice.
+ * */
