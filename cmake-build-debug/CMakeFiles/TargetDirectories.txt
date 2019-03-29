@@ -1,4 +1,0 @@
-/Users/dominicanene/Google Drive/Northwestern/career/kepler_challenge/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/dominicanene/Google Drive/Northwestern/career/kepler_challenge/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/dominicanene/Google Drive/Northwestern/career/kepler_challenge/cmake-build-debug/CMakeFiles/main.dir
-/Users/dominicanene/Google Drive/Northwestern/career/kepler_challenge/cmake-build-debug/CMakeFiles/kepler_challenge.dir
